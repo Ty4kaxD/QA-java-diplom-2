@@ -4,13 +4,12 @@ import io.qameta.allure.Step;
 import io.restassured.response.Response;
 import user.User;
 
+import static constants.Constants.*;
 import static io.restassured.RestAssured.given;
 
 public class UserApi {
 
-    private final static String REGISTER = "/api/auth/register";
-    private final static String LOGIN = "/api/auth/login";
-    private final static String AUTORIZATION ="/api/auth/user";
+
 
     @Step("Создание пользователя")
     public Response createUser(User user) {
@@ -40,7 +39,7 @@ public class UserApi {
                 .header("Content-type", "application/json")
                 .header("Authorization", accessToken)
                 .when()
-                .get(AUTORIZATION);
+                .get(AUTHORIZATION);
         return response;
     }
 
@@ -51,7 +50,7 @@ public class UserApi {
                 .header("Authorization", accessToken)
                 .when()
                 .body(user)
-                .patch(AUTORIZATION);
+                .patch(AUTHORIZATION);
         return response;
     }
     @Step("Удаление пользователя")
@@ -59,7 +58,7 @@ public class UserApi {
         Response response = given()
                 .header("Authorization",accessToken)
                 .when()
-                .delete(AUTORIZATION);
+                .delete(AUTHORIZATION);
         return response;
     }
 

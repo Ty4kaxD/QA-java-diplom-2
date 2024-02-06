@@ -5,12 +5,13 @@ import io.restassured.response.Response;
 import order.Ingredient;
 import order.Order;
 
+import static constants.Constants.INGREDIENTS;
+import static constants.Constants.ORDERS;
 import static io.restassured.RestAssured.given;
 
 public class OrderApi {
 
-    private final static String INGREDIENTS = "/api/ingredients";
-    private final static String ORDERS = "/api/orders";
+
 
     @Step("Получение ингредиентjd")
     public Ingredient getIngredientInfo(){

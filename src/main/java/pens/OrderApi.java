@@ -7,12 +7,16 @@ import order.Order;
 
 import static io.restassured.RestAssured.given;
 
-public class OrderPens {
+public class OrderApi {
+
+    private final static String INGREDIENTS = "/api/ingredients";
+    private final static String ORDERS = "/api/orders";
+
     @Step("Получение ингредиентjd")
     public Ingredient getIngredientInfo(){
         return given()
                 .header("Content-type", "application/json")
-                .get("/api/ingredients")
+                .get(INGREDIENTS)
                 .as(Ingredient.class);
     }
 
@@ -23,7 +27,7 @@ public class OrderPens {
                 .header("Authorization", accessToken)
                 .body(order)
                 .when()
-                .post("/api/orders");
+                .post(ORDERS);
         return response;
     }
 
@@ -33,7 +37,7 @@ public class OrderPens {
                 .header("Content-type", "application/json")
                 .body(order)
                 .when()
-                .post("/api/orders");
+                .post(ORDERS);
         return response;
     }
 
@@ -42,7 +46,7 @@ public class OrderPens {
         Response response = given()
                 .header("Content-type", "application/json")
                 .header("Authorization", accessToken)
-                .get("/api/orders");
+                .get(ORDERS);
         return response;
     }
 
@@ -50,7 +54,7 @@ public class OrderPens {
     public Response getOrdersNotAuthUser() {
         Response response = given()
                 .header("Content-type", "application/json")
-                .get("/api/orders");
+                .get(ORDERS);
         return response;
     }
 }

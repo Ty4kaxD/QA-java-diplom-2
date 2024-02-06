@@ -4,7 +4,7 @@ import io.qameta.allure.junit4.DisplayName;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import pens.UserPens;
+import pens.UserApi;
 import url.BaseUrl;
 
 import java.util.Random;
@@ -16,7 +16,7 @@ public class RegistrationUserTest {
     static String passwordUser = "userpas" + new Random().nextInt(10000);
     static String nameUser = "user" + new Random().nextInt(1000);
     User user = new User(emailUser, passwordUser, nameUser);
-    UserPens userPens = new UserPens();
+    UserApi userApi = new UserApi();
     private String accessToken;
 
     @Before
@@ -26,18 +26,18 @@ public class RegistrationUserTest {
 
     @After
     public void deleteUser() {
-        accessToken = userPens.loginUser(user)
+        accessToken = userApi.loginUser(user)
                 .then()
                 .extract().path("accessToken");
         if (accessToken != null) {
-            userPens.deleteUser(accessToken);
+            userApi.deleteUser(accessToken);
         }
     }
 
     @Test
     @DisplayName("Регистрация пользователя")
     public void testCreateUser() {
-        userPens.createUser(user)
+        userApi.createUser(user)
                 .then()
                 .assertThat()
                 .body("success", equalTo(true))
@@ -48,8 +48,8 @@ public class RegistrationUserTest {
     @Test
     @DisplayName("Регистрация пользователя с данными ранее зарегистрированного пользователя")
     public void testCreateDuplicateUser() {
-        userPens.createUser(user);
-        userPens.createUser(user)
+        userApi.createUser(user);
+        userApi.createUser(user)
                 .then()
                 .assertThat()
                 .body("message", equalTo("User already exists"))
@@ -61,7 +61,7 @@ public class RegistrationUserTest {
     @DisplayName("Регистрация пользователя без email")
     public void testCreateUserWithoutEmail() {
         user.setEmail("");
-        userPens.createUser(user)
+        userApi.createUser(user)
                 .then()
                 .assertThat()
                 .body("message", equalTo("Email, password and name are required fields"))
@@ -73,7 +73,7 @@ public class RegistrationUserTest {
     @DisplayName("Регистрация пользователя без имени")
     public void testCreateUserWithoutName() {
         user.setName("");
-        userPens.createUser(user)
+        userApi.createUser(user)
                 .then()
                 .assertThat()
                 .body("message", equalTo("Email, password and name are required fields"))
@@ -86,7 +86,7 @@ public class RegistrationUserTest {
     @DisplayName("Регистрация пользователя без пароля")
     public void testCreateUserWithoutPassword() {
         user.setPassword("");
-        userPens.createUser(user)
+        userApi.createUser(user)
                 .then()
                 .assertThat()
                 .body("message", equalTo("Email, password and name are required fields"))

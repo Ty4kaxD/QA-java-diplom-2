@@ -4,8 +4,8 @@ import io.qameta.allure.junit4.DisplayName;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import pens.OrderPens;
-import pens.UserPens;
+import pens.OrderApi;
+import pens.UserApi;
 import url.BaseUrl;
 import user.User;
 
@@ -16,8 +16,8 @@ import java.util.Random;
 import static org.hamcrest.CoreMatchers.equalTo;
 
 public class CreateOrderTest {
-    UserPens userPens = new UserPens();
-    OrderPens orderPens = new OrderPens();
+    UserApi userApi = new UserApi();
+    OrderApi orderApi = new OrderApi();
     static String emailUser = "username" + new Random().nextInt(1000) + "@yandex.ru";
     static String passwordUser = "userpas" + new Random().nextInt(10000);
     static String nameUser = "user" + new Random().nextInt(1000);
@@ -30,30 +30,30 @@ public class CreateOrderTest {
     @Before
     public void setUp() {
         BaseUrl.setUp();
-        userPens.createUser(user);
-        accessToken = userPens.loginUser(user).then().extract().path("accessToken");
-        Ingredient ingredientList = orderPens.getIngredientInfo();
+        userApi.createUser(user);
+        accessToken = userApi.loginUser(user).then().extract().path("accessToken");
+        Ingredient ingredientList = orderApi.getIngredientInfo();
         ingredients = new ArrayList<>();
-        int randomIndex_one = random.nextInt(ingredientList.getData().size());
-        int randomIndex_two = random.nextInt(ingredientList.getData().size());
-        int randomIndex_tree = random.nextInt(ingredientList.getData().size());
-        ingredients.add(ingredientList.getData().get(randomIndex_one).get_id());
-        ingredients.add(ingredientList.getData().get(randomIndex_two).get_id());
-        ingredients.add(ingredientList.getData().get(randomIndex_tree).get_id());
+        int randomIndexOne = random.nextInt(ingredientList.getData().size());
+        int randomIndexTwo = random.nextInt(ingredientList.getData().size());
+        int randomIndexTree = random.nextInt(ingredientList.getData().size());
+        ingredients.add(ingredientList.getData().get(randomIndexOne).get_id());
+        ingredients.add(ingredientList.getData().get(randomIndexTwo).get_id());
+        ingredients.add(ingredientList.getData().get(randomIndexTree).get_id());
         order = new Order(ingredients);
     }
 
     @After
     public void deleteUser() {
         if (accessToken != null) {
-            userPens.deleteUser(accessToken);
+            userApi.deleteUser(accessToken);
         }
     }
 
     @Test
     @DisplayName("Создание заказа авторизованным пользователем")
     public void testCreateOrderAuthUser() {
-        orderPens.createOrderAuthUser(order, accessToken)
+        orderApi.createOrderAuthUser(order, accessToken)
                 .then().assertThat()
                 .body("success", equalTo(true))
                 .and()
@@ -63,7 +63,7 @@ public class CreateOrderTest {
     @Test
     @DisplayName("Создание заказа неавторизованным пользователем")
     public void testCreateOrderNotAuthUser() {
-        orderPens.createOrderNotAuthUser(order)
+        orderApi.createOrderNotAuthUser(order)
                 .then().assertThat()
                 .body("success", equalTo(true))
                 .and()
@@ -74,7 +74,7 @@ public class CreateOrderTest {
     @DisplayName("Создание заказа без ингредиентов")
     public void testCreateOrderNoIngredients() {
         ingredients.clear();
-        orderPens.createOrderAuthUser(order, accessToken)
+        orderApi.createOrderAuthUser(order, accessToken)
                 .then().assertThat()
                 .body("success", equalTo(false))
                 .and()
@@ -87,7 +87,7 @@ public class CreateOrderTest {
     @DisplayName("Создание заказа c неверным хешем ингредиентов")
     public void testCreateOrderWithWrongHash() {
         ingredients.add("qwe123weqwrg3454365eytrey");
-        orderPens.createOrderAuthUser(order, accessToken)
+        orderApi.createOrderAuthUser(order, accessToken)
                 .then().assertThat()
                 .statusCode(500);
     }

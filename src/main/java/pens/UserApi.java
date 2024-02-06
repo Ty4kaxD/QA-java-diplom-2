@@ -6,7 +6,11 @@ import user.User;
 
 import static io.restassured.RestAssured.given;
 
-public class UserPens {
+public class UserApi {
+
+    private final static String REGISTER = "/api/auth/register";
+    private final static String LOGIN = "/api/auth/login";
+    private final static String AUTORIZATION ="/api/auth/user";
 
     @Step("Создание пользователя")
     public Response createUser(User user) {
@@ -14,7 +18,7 @@ public class UserPens {
                 .header("Content-type", "application/json")
                 .body(user)
                 .when()
-                .post("/api/auth/register");
+                .post(REGISTER);
         return response;
     }
 
@@ -26,7 +30,7 @@ public class UserPens {
                 .header("Content-type", "application/json")
                 .body(user)
                 .when()
-                .post("/api/auth/login");
+                .post(LOGIN);
         return response;
     }
 
@@ -36,7 +40,7 @@ public class UserPens {
                 .header("Content-type", "application/json")
                 .header("Authorization", accessToken)
                 .when()
-                .get("/api/auth/user");
+                .get(AUTORIZATION);
         return response;
     }
 
@@ -47,7 +51,7 @@ public class UserPens {
                 .header("Authorization", accessToken)
                 .when()
                 .body(user)
-                .patch("/api/auth/user");
+                .patch(AUTORIZATION);
         return response;
     }
     @Step("Удаление пользователя")
@@ -55,7 +59,7 @@ public class UserPens {
         Response response = given()
                 .header("Authorization",accessToken)
                 .when()
-                .delete("/api/auth/user");
+                .delete(AUTORIZATION);
         return response;
     }
 

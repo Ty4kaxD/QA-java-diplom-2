@@ -4,7 +4,7 @@ import io.qameta.allure.junit4.DisplayName;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import pens.UserPens;
+import pens.UserApi;
 import url.BaseUrl;
 import java.util.Random;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -14,7 +14,7 @@ public class UpdateUserTest {
     static String passwordUser = "userpas" + new Random().nextInt(10000);
     static String nameUser = "user" + new Random().nextInt(1000);
     User user = new User(emailUser, passwordUser, nameUser);
-    UserPens userPens = new UserPens();
+    UserApi userApi = new UserApi();
     private String accessToken;
     private String updateEmail = "username" + new Random().nextInt(10000) + "@yandex.ru";
     private String updateName = "user" + new Random().nextInt(10000);
@@ -22,8 +22,8 @@ public class UpdateUserTest {
     @Before
     public void setUp() {
         BaseUrl.setUp();
-        userPens.createUser(user);
-        accessToken = userPens.loginUser(user)
+        userApi.createUser(user);
+        accessToken = userApi.loginUser(user)
                 .then()
                 .extract().path("accessToken");
     }
@@ -31,7 +31,7 @@ public class UpdateUserTest {
     @After
     public void deleteUser() {
         if (accessToken != null) {
-            userPens.deleteUser(accessToken);
+            userApi.deleteUser(accessToken);
         }
     }
 
@@ -39,7 +39,7 @@ public class UpdateUserTest {
     @DisplayName("Изменение email авторизованного пользователя")
     public void testUpdateEmailAuthUser() {
         user.setEmail(updateEmail);
-        userPens.updateUser(user, accessToken)
+        userApi.updateUser(user, accessToken)
                 .then().assertThat()
                 .body("success", equalTo(true))
                 .and()
@@ -52,7 +52,7 @@ public class UpdateUserTest {
     @DisplayName("Изменение имени авторизованного пользователя")
     public void testUpdateNameAuthUser() {
         user.setName(updateName);
-        userPens.updateUser(user, accessToken)
+        userApi.updateUser(user, accessToken)
                 .then().assertThat()
                 .body("success", equalTo(true))
                 .and()
@@ -66,7 +66,7 @@ public class UpdateUserTest {
     public void testUpdateEmailNotAuthUser() {
         accessToken = "";
         user.setEmail(updateEmail);
-        userPens.updateUser(user, accessToken)
+        userApi.updateUser(user, accessToken)
                 .then().assertThat()
                 .body("success", equalTo(false)).
                 and()
@@ -80,7 +80,7 @@ public class UpdateUserTest {
     public void testUpdateNameNotAuthUser() {
         accessToken = "";
         user.setName(updateName);
-        userPens.updateUser(user, accessToken)
+        userApi.updateUser(user, accessToken)
                 .then().assertThat()
                 .body("success", equalTo(false)).
                 and()

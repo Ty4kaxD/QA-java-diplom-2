@@ -5,8 +5,8 @@ import io.qameta.allure.junit4.DisplayName;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import pens.OrderPens;
-import pens.UserPens;
+import pens.OrderApi;
+import pens.UserApi;
 import url.BaseUrl;
 import user.User;
 
@@ -18,8 +18,8 @@ import static org.hamcrest.CoreMatchers.equalTo;
 
 public class GetOrderTest {
     BaseUrl baseUrl = new BaseUrl();
-    UserPens userPens = new UserPens();
-    OrderPens orderPens = new OrderPens();
+    UserApi userApi = new UserApi();
+    OrderApi orderApi = new OrderApi();
     static String emailUser = "username" + new Random().nextInt(1000) + "@yandex.ru";
     static String passwordUser = "userpas" + new Random().nextInt(10000);
     static String nameUser = "user" + new Random().nextInt(1000);
@@ -32,21 +32,21 @@ public class GetOrderTest {
     @Before
     public void setUp() {
         baseUrl.setUp();
-        userPens.createUser(user);
-        accessToken = userPens.loginUser(user).then().extract().path("accessToken");
+        userApi.createUser(user);
+        accessToken = userApi.loginUser(user).then().extract().path("accessToken");
     }
 
     @After
     public void deleteUser() {
         if (accessToken != null) {
-            userPens.deleteUser(accessToken);
+            userApi.deleteUser(accessToken);
         }
     }
 
     @Test
     @DisplayName("Получение списка заказов авторизованным пользователем")
     public void testGetOrderAuthUser() {
-        orderPens.getOrdersAuthUser(accessToken)
+        orderApi.getOrdersAuthUser(accessToken)
                 .then()
                 .assertThat()
                 .body("success", equalTo(true))
@@ -57,7 +57,7 @@ public class GetOrderTest {
     @Test
     @DisplayName("Получение списка заказов неавторизованным пользователем")
     public void testGetOrderNotAuthUser() {
-        orderPens.getOrdersNotAuthUser()
+        orderApi.getOrdersNotAuthUser()
                 .then()
                 .assertThat()
                 .body("success", equalTo(false))
